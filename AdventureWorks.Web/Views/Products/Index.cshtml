@@ -1,0 +1,79 @@
+﻿@model IEnumerable<AdventureWorks.Web.Models.ProductViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+
+<div ng-app="ProductApp">
+    <div ng-controller="productsController">
+        <input type="text" ng-model="search" value="" />
+        <table class="table">
+            <tr>
+                <th ng-click="Sort('ProductNumber')">
+                    Product Number
+                </th>
+                <th ng-click="Sort('ProductName')">
+                    Product Name
+                </th>
+                <th ng-click="Sort('ProductModel')">
+                    Product Model
+                </th>
+                <th ng-click="Sort('ProductCategory')">
+                    Product Category
+                </th>
+                <th ng-click="Sort('ProductSubcategory')">
+                    Product Subcategory
+                </th>
+                <th ng-click="Sort('Color')">
+                    Color
+                </th>
+                <th ng-click="Sort('Size')">
+                    Size
+                </th>
+                <th ng-click="Sort('Weight')">
+                    Weight
+                </th>
+                <th ng-click="Sort('ListPrice')">
+                    List Price
+                </th>
+            </tr>
+            <tr dir-paginate="product in Products | filter:search |
+                    orderBy:key:AscOrDesc | itemsPerPage:10">
+                <td ng-bind="product.ProductNumber"></td>
+                <td ng-bind="product.ProductName"></td>
+                <td ng-bind="product.ProductModel"></td>
+                <td ng-bind="product.ProductCategory"></td>
+                <td ng-bind="product.ProductSubcategory"></td>
+                <td ng-bind="product.Color"></td>
+                <td ng-bind="product.Size"></td>
+                <td ng-bind="product.Weight"></td>
+                <td ng-bind="product.ListPrice"></td>
+
+            </tr>
+        </table>
+        <dir-pagination-controls max-size="10"
+                                 direction-links="true"
+                                 boundary-links="true">
+        </dir-pagination-controls>
+    </div>
+</div>
+
+<script>
+    var app = angular.module("ProductApp", ['angularUtils.directives.dirPagination']);
+
+    app.controller('productsController', function ($scope, $http) {
+        $scope.Sort = function (col) {
+            $scope.key = col;
+            $scope.AscOrDesc = !$scope.AscOrDesc;
+        }
+        $http.get('/Products/GetProductList').then(function (response) {
+
+            $scope.Products = response.data;
+        });
+
+    });
+</script>
